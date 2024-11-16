@@ -232,6 +232,15 @@ class RobotsLine {
 }
 
 class RobotsList extends Array<RobotsLine> {
+  constructor(...items: RobotsLine[]) {
+    super(...items);
+    
+    // Set the prototype explicitly.
+    Object.setPrototypeOf(this, RobotsList.prototype);
+  }
+  
+  public test = ''
+  
   /**
    * Add Robots key-value pairs to the list
    * @param {string} key Robots key

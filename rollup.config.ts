@@ -28,7 +28,11 @@ export default defineConfig([
     },
     plugins: [
       ...pluginsLocal,
-      typescript(),
+      typescript({
+        compilerOptions: {
+          removeComments: true,
+        },
+      }),
     ]
   },
   {
