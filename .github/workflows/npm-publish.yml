@@ -27,7 +27,7 @@ jobs:
           node-version: 20
           cache: npm
       # 执行多条脚本
-      - run: npm cli
+      - run: npm install
       - run: npm run build
 
   publish-npm:
