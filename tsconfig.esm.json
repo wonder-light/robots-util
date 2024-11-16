@@ -1,0 +1,38 @@
+{
+  "compilerOptions": {
+    "target": "esnext",
+    "module": "esnext",
+    "moduleResolution": "node",
+    "lib": [
+      "es2017",
+      "esnext",
+      "dom"
+    ],
+    "strict": true,
+    "esModuleInterop": false,
+    // 发出额外的JavaScript来简化对导入CommonJS模块的支持。这将启用 `allowSyntheticDefaultImports` 以实现类型兼容性。
+    "rootDir": "./",
+    "allowJs": true,
+    // 允许JavaScript文件成为程序的一部分。使用‘ checkJS ’选项从这些文件中获取错误。
+    "noImplicitAny": true,
+    // 类型的表达式和声明启用错误报告
+    "experimentalDecorators": true,
+    // 启动装饰器
+    "resolveJsonModule": true,
+    // 删除注释
+    "removeComments": false,
+    // 删除注释
+    "declarationMap": false
+    // 生成定义 sourceMap
+    // "declaration": true, // 生成定义文件
+    // "declarationDir": "./dist", // 定义文件输出目
+    // "outDir": "./dist", // 定义文件输出目
+  },
+  "include": [
+    "lib/**/*.ts"
+  ],
+  "exclude": [
+    "dist/**",
+    "node_modules/**"
+  ]
+}
