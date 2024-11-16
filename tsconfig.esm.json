@@ -20,7 +20,7 @@
     // 启动装饰器
     "resolveJsonModule": true,
     // 删除注释
-    "removeComments": false,
+    "removeComments": true,
     // 删除注释
     "declarationMap": false
     // 生成定义 sourceMap
