@@ -5,7 +5,7 @@ import { EOL } from 'os';
  *
  *  @class RobotsLine
  */
-class RobotsLine {
+export class RobotsLine {
   /**
    * the raw line input.
    * @type {string}
@@ -231,15 +231,12 @@ class RobotsLine {
   }
 }
 
-class RobotsList extends Array<RobotsLine> {
-  constructor(...items: RobotsLine[]) {
-    super(...items);
-    
-    // Set the prototype explicitly.
-    Object.setPrototypeOf(this, RobotsList.prototype);
-  }
+export class RobotsList {
+  private readonly list: RobotsLine[];
   
-  public test = ''
+  constructor(...items: RobotsLine[]) {
+    this.list = items;
+  }
   
   /**
    * Add Robots key-value pairs to the list
@@ -249,9 +246,76 @@ class RobotsList extends Array<RobotsLine> {
    */
   append(key: string, value: string, line?: string) {
     line = line || (key + ': ' + value);
-    const next = new RobotsLine(line, this.length, key, value);
+    const next = new RobotsLine(line, this.list.length, key, value);
     next['_before'] = ' ';
-    this.push(next);
+    this.list.push(next);
+  }
+  
+  /**
+   *  Parse the robots.txt file content.
+   *
+   *  ```
+   *  User-Agent: *
+   *  Disallow: /private/ # does not block indexing, add meta noindex
+   *  ```
+   *
+   *  Becomes:
+   *
+   *  ```
+   *  [
+   *    {
+   *      key: 'User-Agent',
+   *      value: '*',
+   *      lineno: 1,
+   *      line: 'User-Agent: *'
+   *    },
+   *    {
+   *      key: 'Disallow',
+   *      value: '/private/',
+   *      lineno: 2,
+   *      line: 'Disallow: /private/ # does not block indexing, add meta noindex',
+   *      comment: '# does not block indexing, add meta noindex'
+   *    }
+   *  ]
+   *  ```
+   *
+   *  @function parse
+   *  @member RobotsParser
+   *  @param {String} content the robots.txt file content.
+   *  @this {RobotsList} the parsed robots.txt declaration list.
+   *
+   *  @returns an array of line objects.
+   */
+  parse(content: string): RobotsList {
+    const lines = content.split('\n');
+    // remove trailing newline
+    if (!lines[lines.length - 1]) {
+      lines.pop();
+    }
+    
+    lines.forEach((line, index) => {
+      const item = new RobotsLine(line, index);
+      this.list.push(item.parse());
+    });
+    
+    return this;
+  }
+  
+  /**
+   *  Serialize the robots.txt declaration list.
+   *
+   *  @function serialize
+   *  @member RobotsParser
+   *  @this {RobotsList} the parsed robots.txt declaration list.
+   *
+   *  @returns a string of robots.txt file content.
+   */
+  serialize(): string {
+    let content = '';
+    for (const line of this.list) {
+      content += line.serialize();
+    }
+    return content;
   }
 }
 
@@ -302,16 +366,7 @@ export class RobotsParser {
    */
   parse(content: string): RobotsList {
     const list = new RobotsList();
-    const lines = content.split('\n');
-    // remove trailing newline
-    if (!lines[lines.length - 1]) {
-      lines.pop();
-    }
-    lines.forEach((line, index) => {
-      const item = new RobotsLine(line, index);
-      list.push(item.parse());
-    });
-    return list;
+    return list.parse(content);
   }
   
   /**
@@ -324,10 +379,6 @@ export class RobotsParser {
    *  @returns a string of robots.txt file content.
    */
   serialize(list: RobotsList): string {
-    let content = '';
-    for (const line of list) {
-      content += line.serialize();
-    }
-    return content;
+    return list.serialize();
   }
 }
